@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Best Friends</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    overflow-x:hidden;
+    background:black;
+    color:white;
+}
+
+#matrix{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
+    background:black;
+}
+
+.loading-screen{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:black;
+    position:fixed;
+    z-index:999;
+}
+
+.loader{
+    width:70px;
+    height:70px;
+    border:8px solid #222;
+    border-top:8px solid hotpink;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
+    }
+}
+
+.hero{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+.hero h1,
+.hero h2{
+    font-size:90px;
+    color:#ff4fc3;
+    text-shadow:0 0 20px #ff1493;
+    animation:zoom 2s ease;
+}
+
+.hero h2{
+    margin-top:10px;
+}
+
+@keyframes zoom{
+    from{
+        transform:scale(0);
+        opacity:0;
+    }
+
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+.birthday{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+}
+
+.cake{
+    font-size:100px;
+    animation:float 2s ease-in-out infinite;
+}
+
+.birthday h3{
+    font-size:45px;
+    color:#ffd6ef;
+}
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-20px);
+    }
+}
+
+.gallery{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:40px;
+    padding:50px 20px;
+}
+
+.message-card{
+    width:90%;
+    max-width:500px;
+    background:white;
+    color:#ff1493;
+    padding:18px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 0 20px rgba(255,20,147,0.7);
+    animation:fadeUp 1.5s ease;
+}
+
+.message-card.second{
+    background:#ffe8f5;
+}
+
+.photos{
+    display:flex;
+    justify-content:center;
+}
+
+.photos img{
+    width:220px;
+    height:320px;
+    object-fit:cover;
+    border-radius:20px;
+    border:4px solid hotpink;
+    box-shadow:0 0 25px hotpink;
+    transition:0.5s;
+}
+
+.photos img:hover{
+    transform:scale(1.05);
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.hidden{
+    opacity:0;
+}
+
+.show{
+    opacity:1;
+    transition:2s;
+}
+
+@media(max-width:768px){
+
+.hero h1,
+.hero h2{
+    font-size:55px;
+}
+
+.birthday h3{
+    font-size:30px;
+}
+
+.photos img{
+    width:170px;
+    height:250px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="loading-screen" id="loading">
+  <div class="loader"></div>
+</div>
+
+<section class="hero hidden" id="hero">
+  <h1>MY BEST</h1>
+  <h2>FRIENDS</h2>
+</section>
+
+<section class="birthday hidden" id="birthday">
+  <div class="cake">💖</div>
+  <h3>Forever Together</h3>
+</section>
+
+<section class="gallery hidden" id="gallery">
+
+  <div class="message-card">
+    <p>Terimakasih sudah menjadi sahabat terbaik ❤️</p>
+  </div>
+
+  <div class="photos">
+    <img src="foto1.jpg">
+  </div>
+
+  <div class="message-card second">
+    <p>Semoga persahabatan kita selalu bersama ✨</p>
+  </div>
+
+  <div class="photos">
+    <img src="foto1.jpg">
+  </div>
+
+</section>
+
+<script>
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const letters = "MYBESTFRIENDS0123456789❤️";
+const array = letters.split("");
+
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+
+for(let i=0;i<columns;i++){
+    drops[i] = 1;
+}
+
+function draw(){
+
+    ctx.fillStyle = "rgba(0,0,0,0.08)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle = "#ff1493";
+    ctx.font = fontSize + "px monospace";
+
+    for(let i=0;i<drops.length;i++){
+
+        const text = array[Math.floor(Math.random()*array.length)];
+
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+
+        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975){
+            drops[i] = 0;
+        }
+
+        drops[i]++;
+    }
+}
+
+setInterval(draw,35);
+
+setTimeout(()=>{
+    document.getElementById("loading").style.display = "none";
+
+    document.getElementById("hero").classList.add("show");
+
+    setTimeout(()=>{
+        document.getElementById("birthday").classList.add("show");
+    },3000)
+
+    setTimeout(()=>{
+        document.getElementById("gallery").classList.add("show");
+    },5000)
+
+},3000)
+</script>
+
+</body>
+</html>
